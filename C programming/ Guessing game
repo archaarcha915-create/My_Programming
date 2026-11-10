@@ -1,0 +1,255 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main()
+{
+    int choice;
+    int difficulty;
+    int secret;
+    int guess;
+    int maxNumber;
+    int maxAttempts;
+    int attempt;
+    int score;
+    int baseScore;
+    int highScore = 0;
+    int won;
+
+    char replay;
+
+    /* Initialize random number generator */
+    srand(time(NULL));
+
+    while(1)
+    {
+        /* Main Menu */
+        printf("\n=================================\n");
+        printf("      NUMBER GUESSING GAME\n");
+        printf("=================================\n");
+        printf("1. Start Game\n");
+        printf("2. Instructions\n");
+        printf("3. View High Score\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch(choice)
+        {
+            /* -------------------------------- */
+            /*          START GAME              */
+            /* -------------------------------- */
+            case 1:
+
+                printf("\n=================================\n");
+                printf("        SELECT DIFFICULTY\n");
+                printf("=================================\n");
+                printf("1. Easy   (1 - 50, 10 attempts)\n");
+                printf("2. Medium (1 - 100, 7 attempts)\n");
+                printf("3. Hard   (1 - 500, 5 attempts)\n");
+                printf("Enter your choice: ");
+                scanf("%d", &difficulty);
+
+                /* Set difficulty */
+                switch(difficulty)
+                {
+                    case 1:
+                        maxNumber = 50;
+                        maxAttempts = 10;
+                        baseScore = 50;
+                        break;
+
+                    case 2:
+                        maxNumber = 100;
+                        maxAttempts = 7;
+                        baseScore = 75;
+                        break;
+
+                    case 3:
+                        maxNumber = 500;
+                        maxAttempts = 5;
+                        baseScore = 100;
+                        break;
+
+                    default:
+                        printf("\nInvalid difficulty choice!\n");
+                        break;
+                }
+
+                /* If invalid difficulty, return to main menu */
+                if(difficulty < 1 || difficulty > 3)
+                {
+                    break;
+                }
+
+                /* Generate random secret number */
+                secret = rand() % maxNumber + 1;
+
+                won = 0;
+
+                printf("\n=================================\n");
+                printf("          GAME STARTED\n");
+                printf("=================================\n");
+                printf("Range : 1 - %d\n", maxNumber);
+                printf("Attempts : %d\n", maxAttempts);
+
+                /* Guessing loop */
+                for(attempt = 1; attempt <= maxAttempts; attempt++)
+                {
+                    printf("\nAttempt %d of %d", attempt, maxAttempts);
+                    printf("\nEnter your guess: ");
+                    scanf("%d", &guess);
+
+                    /* Validate guess */
+                    if(guess < 1 || guess > maxNumber)
+                    {
+                        printf("Invalid guess! ");
+                        printf("Please enter a number between 1 and %d.\n",
+                               maxNumber);
+
+                        /* Do not count invalid guess */
+                        attempt--;
+                        continue;
+                    }
+
+                    /* Check the guess */
+                    if(guess == secret)
+                    {
+                        printf("\nCorrect! Congratulations!\n");
+
+                        won = 1;
+
+                        /* Calculate score */
+                        score = baseScore - ((attempt - 1) * 5);
+
+                        if(score < 0)
+                        {
+                            score = 0;
+                        }
+
+                        printf("\n================================\n");
+                        printf("          YOU WIN!\n");
+                        printf("================================\n");
+                        printf("You guessed the number correctly!\n");
+                        printf("Attempts Used : %d\n", attempt);
+                        printf("Score : %d\n", score);
+                        printf("Congratulations!\n");
+
+                        /* Update high score */
+                        if(score > highScore)
+                        {
+                            highScore = score;
+                            printf("\nNew High Score!\n");
+                        }
+
+                        break;
+                    }
+
+                    else if(abs(guess - secret) <= 5)
+                    {
+                        if(guess > secret)
+                        {
+                            printf("Very Close! Too High!\n");
+                        }
+                        else
+                        {
+                            printf("Very Close! Too Low!\n");
+                        }
+                    }
+
+                    else if(guess > secret)
+                    {
+                        printf("Too High!\n");
+                    }
+
+                    else
+                    {
+                        printf("Too Low!\n");
+                    }
+                }
+
+                /* Losing condition */
+                if(won == 0)
+                {
+                    printf("\n================================\n");
+                    printf("            GAME OVER\n");
+                    printf("================================\n");
+                    printf("You have used all your attempts.\n");
+                    printf("The secret number was: %d\n", secret);
+                    printf("Better luck next time!\n");
+                }
+
+                /* Replay option */
+                printf("\nDo you want to play again? (Y/N): ");
+                scanf(" %c", &replay);
+
+                if(replay == 'Y' || replay == 'y')
+                {
+                    /* Start another game */
+                    break;
+                }
+                else
+                {
+                    printf("\nReturning to Main Menu...\n");
+                    break;
+                }
+
+
+            /* --------------------------------
+                        INSTRUCTIONS
+               -------------------------------- */
+            case 2:
+
+                printf("\n=================================\n");
+                printf("          INSTRUCTIONS\n");
+                printf("=================================\n");
+                printf("1. Select a difficulty level.\n");
+                printf("2. The computer will generate a secret number.\n");
+                printf("3. Guess the secret number.\n");
+                printf("4. You will receive hints after each guess.\n");
+                printf("5. Too High means your guess is greater.\n");
+                printf("6. Too Low means your guess is smaller.\n");
+                printf("7. Very Close means your guess is within 5.\n");
+                printf("8. Guess the number before attempts run out.\n");
+                printf("9. Higher scores are saved as High Score.\n");
+
+                break;
+
+
+            /* --------------------------------
+                        HIGH SCORE
+               -------------------------------- */
+            case 3:
+
+                printf("\n=================================\n");
+                printf("           HIGH SCORE\n");
+                printf("=================================\n");
+                printf("Highest Score : %d\n", highScore);
+
+                break;
+
+
+            /* --------------------------------
+                            EXIT
+               -------------------------------- */
+            case 4:
+
+                printf("\nThank you for playing!\n");
+                printf("Goodbye!\n");
+
+                return 0;
+
+
+            /* --------------------------------
+                     INVALID MENU CHOICE
+               -------------------------------- */
+            default:
+
+                printf("\nInvalid choice!\n");
+                printf("Please enter a number between 1 and 4.\n");
+        }
+    }
+
+    return 0;
+}
+#endif // 1
